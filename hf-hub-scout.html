@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HF Hub Scout</title>
+  <style>
+    :root {
+      --yellow: #FFD21F;
+      --yellow-dark: #E5B800;
+      --black: #111;
+      --gray: #666;
+      --light: #f6f6f6;
+      --border: #e0e0e0;
+      --bg: #ffffff;
+      --accent: #FF9D00;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--black);
+      color: white;
+      padding: 2rem 1rem;
+      border-bottom: 4px solid var(--yellow);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header p {
+      color: #aaa;
+      margin-top: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--yellow);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--black);
+      font-weight: bold;
+    }
+
+    .controls {
+      background: var(--light);
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .controls-inner {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.95rem;
+ outline: none;
+ transition: box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 0 3px rgba(255, 210, 31, 0.3);
+      border-color: var(--yellow-dark);
+    }
+
+    select {
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      background: var(--yellow);
+      border: none;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--black);
+      transition: transform 0.1s;
+    }
+
+    button:hover {
+      background: var(--yellow-dark);
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .status {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--gray);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem 0;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      background: white;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer;
+ text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .model-id {
+      font-weight: 600;
+      font-size: 0.95rem;
+      word-break: break-all;
+      color: var(--black);
+ line-height: 1.3;
+    }
+
+    .org {
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .model-name {
+      color: var(--black);
+    }
+
+    .stats {
+      display: flex;
+      gap: 1rem;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+    }
+
+    .tag {
+      background: var(--light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--gray);
+      border: 1px solid var(--border);
+    }
+
+    .tag.task {
+      background: #fff8e1;
+      color: var(--accent);
+      border-color: #ffe0b2;
+      font-weight: 500;
+    }
+
+    .likes-count {
+      color: #e91e63;
+      font-weight: 600;
+    }
+
+    .pill {
+      background: var(--yellow);
+      color: var(--black);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+ white-space: nowrap;
+    }
+
+    .trending-badge {
+      background: var(--yellow);
+    }
+
+    .new-badge {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--gray);
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      header h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1><span class="logo-icon">⚡</span> HF Hub Scout</h1>
+    <p>Discover Hugging Face models with better UX. Built for builders.</p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <input type="text" id="searchInput" placeholder="Search models, orgs, tags...">
+    <select id="sortSelect">
+      <option value="downloads">Most Downloads</option>
+      <option value="likes">Most Likes</option>
+      <option value="trending">Trending</option>
+ <option value="created">Newest</option>
+    </select>
+    <select id="taskFilter">
+      <option value="">All Tasks</option>
+      <option value="text-generation">Text Generation</option>
+      <option value="image-classification">Image Classification</option>
+      <option value="text-to-image">Text-to-Image</option>
+      <option value="feature-extraction">Embeddings</option>
+      <option value="automatic-speech-recognition">Speech</option>
+      <option value="summarization">Summarization</option>
+    </select>
+    <button onclick="loadModels()">Refresh</button>
+  </div>
+</div>
+
+<div class="container">
+  <div id="status" class="status">Loading models from Hugging Face Hub...</div>
+  <div id="grid" class="grid"></div>
+</div>
+
+<footer>
+  <p>Data via Hugging Face Hub API • Not affiliated with Hugging Face • Built in one sitting</p>
+</footer>
+
+<script>
+  let allModels = [];
+  const grid = document.getElementById('grid');
+  const status = document.getElementById('status');
+  const searchInput = document.getElementById('searchInput');
+  const sortSelect = document.getElementById('sortSelect');
+  const taskFilter = document.getElementById('taskFilter');
+
+  async function loadModels() {
+    status.style.display = 'block';
+    status.textContent = 'Fetching live data from Hugging Face Hub...';
+    grid.innerHTML = '';
+
+    const sort = sortSelect.value;
+    let url = 'https://huggingface.co/api/models?limit=100';
+
+    if (sort === 'trending') {
+      url = 'https://huggingface.co/api/models?sort=likes7d&limit=100';
+    } else if (sort === 'likes') {
+      url = 'https://huggingface.co/api/models?sort=likes&limit=100';
+    } else if (sort === 'created') {
+      url = 'https://huggingface.co/api/models?sort=created&direction=-1&limit=100';
+    } else {
+      url = 'https://huggingface.co/api/models?sort=downloads&limit=100';
+    }
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HF API unavailable');
+      const data = await res.json();
+      allModels = data;
+ render(allModels);
+      status.style.display = 'none';
+    } catch (e) {
+      status.textContent = 'Could not reach HF API. Displaying curated sample data instead.';
+      allModels = getSampleData();
+      render(allModels);
+ setTimeout(() => status.style.display = 'none', 2000);
+    }
+  }
+
+  function getSampleData() {
+    return [
+      {id:"meta-llama/Llama-2-7b-hf", author:"meta-llama", downloads:15000000, likes:5423, tags:["transformers","pytorch","llama","text-generation"],pipeline_tag:"text-generation",createdAt:"2023-07-18T00:00:00Z"},
+      {id:"stabilityai/stable-diffusion-xl-base-1.0", author:"stabilityai", downloads:12000000, likes:8901, tags:["diffusers","pytorch","safetensors","text-to-image"],pipeline_tag:"text-to-image",createdAt:"2023-07-26T00:00:00Z"},
+      {id:"microsoft/DialoGPT-medium", author:"microsoft", downloads:4500000, likes:2100, tags:["transformers","pytorch","conversational"],pipeline_tag:"conversational",createdAt:"2020-01-01T00:00:00Z"},
+      {id:"openai/whisper-large-v3", author:"openai", downloads:3200000, likes:3200, tags:["transformers","pytorch","automatic-speech-recognition"],pipeline_tag:"automatic-speech-recognition",createdAt:"2023-11-01T00:00:00Z"},
+ {id:"sentence-transformers/all-MiniLM-L6-v2", author:"sentence-transformers", downloads:9800000, likes:4100, tags:["sentence-transformers","pytorch","feature-extraction"],pipeline_tag:"feature-extraction",createdAt:"2021-08-01T00:00:00Z"},
+      {id:"google/flan-t5-base", author:"google", downloads:2100000, likes:1800, tags:["transformers","pytorch","t5","text2text-generation"],pipeline_tag:"text2text-generation",createdAt:"2022-10-01T00:00:00Z"},
+      {id:"tiiuae/falcon-7b", author:"tiiuae", downloads:1100000, likes:1500, tags:["transformers","pytorch","falcon","text-generation"],pipeline_tag:"text-generation",createdAt:"2023-03-01T00:00:00Z"},
+      {id:"runwayml/stable-diffusion-v1-5", author:"runwayml", downloads:18000000, likes:7600, tags:["diffusers","pytorch","stable-diffusion","text-to-image"],pipeline_tag:"text-to-image",createdAt:"2022-10-01T00:00:00Z"},
+ {id:"facebook/bart-large-cnn", author:"facebook", downloads:3400000, likes:2800, tags:["transformers","pytorch","bart","summarization"],pipeline_tag:"summarization",createdAt:"2020-01-01T00:00:00Z"},
+      {id:"distilbert-base-uncased", author:"distilbert", downloads:27000000, likes:620, tags:["transformers","pytorch","bert","fill-mask"],pipeline_tag:"fill-mask",createdAt:"2019-10-01T00:00:00Z"}
+    ];
+  }
+
+  function render(models) {
+    const term = searchInput.value.toLowerCase();
+    const task = taskFilter.value;
+    const sort = sortSelect.value;
+
+    let filtered = models.filter(m => {
+      const matchTerm = !term || m.id.toLowerCase().includes(term) || (m.tags||[]).some(t=>t.toLowerCase().includes(term));
+      const matchTask = !task || (m.pipeline_tag === task) || (m.tags||[]).includes(task);
+      return matchTerm && matchTask;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No models found. Try adjusting filters.</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(m => {
+      const [org, name] = m.id.includes('/') ? m.id.split('/') : ['', m.id];
+      const likes = formatNumber(m.likes || 0);
+      const downloads = formatNumber(m.downloads || 0);
+      const tags = (m.tags || []).slice(0, 3);
+      const taskTag = m.pipeline_tag;
+      const daysSince = m.createdAt ? Math.floor((Date.now() - new Date(m.createdAt).getTime()) / (1000*60*60*24)) : 999;
+      const isNew = daysSince < 30;
+      const isTrending = (m.likes7d || 0) > 50 || (sort === 'trending');
+
+      let badge = '';
+      if (isTrending) badge = '<span class="pill trending-badge">Trending</span>';
+      else if (isNew) badge = '<span class="pill new-badge">New</span>';
+
+      const taskHtml = taskTag ? `<span class="tag task">${formatTask(taskTag)}</span>` : '';
+
+      return `
+        <a class="card" href="https://huggingface.co/${m.id}" target="_blank" rel="noopener">
+          <div class="card-header">
+            <div class="model-id">
+              <span class="org">${org ? org + '/' : ''}</span><span class="model-name">${name || m.id}</span>
+            </div>
+            ${badge}
+          </div>
+          <div class="tags">
+            ${taskHtml}
+            ${tags.map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+          <div class="stats">
+            <span class="stat">⬇️ ${downloads}</span>
+            <span class="stat likes-count">❤️ ${likes}</span>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function formatNumber(n) {
+    if (n >= 1_000_000) return (n/1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000) return (n/1_000).toFixed(1) + 'k';
+    return n.toString();
+  }
+
+  function formatTask(t) {
+    return t.replace(/-/g, ' ').replace(/\b\w/g, l=>l.toUpperCase());
+  }
+
+  searchInput.addEventListener('input', () => render(allModels));
+  sortSelect.addEventListener('change', () => loadModels());
+  taskFilter.addEventListener('change', () => render(allModels));
+
+  loadModels();
+</script>
+
+</body>
+</html>
